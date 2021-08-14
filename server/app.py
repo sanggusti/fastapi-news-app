@@ -1,6 +1,12 @@
+import os
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+
 from .api.news_api import get_news_articles
+
+DIR = os.path.dirname(__file__)
 
 
 class SearchRequest(BaseModel):
@@ -9,6 +15,16 @@ class SearchRequest(BaseModel):
 
 
 app = FastAPI()
+
+app.mount(
+    "/static", StaticFiles(directory=f"{DIR}/../client/build/static"), name="static"
+)
+
+
+@app.get("/")
+async def index():
+    """Return application index."""
+    return FileResponse(f"{DIR}/../client/build/index.html")
 
 
 @app.post("/api/search")
