@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchMonthlyNews } from "./api/newsApi";
 import "./App.css";
 
@@ -14,6 +14,15 @@ const App = () => {
     const searchResults = await fetchMonthlyNews(q);
     setArticles(searchResults);
   };
+
+  useEffect(() => {
+    const fetchWorldNews = async () => {
+      const searchResults = await fetchMonthlyNews("world news");
+      setArticles(searchResults);
+    };
+    fetchWorldNews();
+  }, []);
+
 
   return (
     <div className="App">
