@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { fetchMonthlyNews } from "./api/newsApi";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [articles, setArticles] = useState([]);
+  const [q, setQ] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!q) return;
+
+    const searchResults = await fetchMonthlyNews(q);
+    setArticles(searchResults);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <section>
+        Enter a search query to find the most popular news articles this month
+        🔎
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            id="q"
+            name="q"
+            placeholder="world news"
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <br />
+          <br />
+          <input type="submit" value="Search for articles" />
+        </form>
+      </section>
+      <section>
+        {articles && articles.length > 0 && (
+          <ol>
+            {articles.map((article, index) => {
+              const { author, title, url, urlToImage, description } = article;
+              return (
+                <li key={index}>
+                  <a href={url} target="__other">
+                    {title}
+                  </a>
+                  <h5>{author}</h5>
+                  <img src={urlToImage} alt={title} />
+                  <p>{description}</p>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </section>
     </div>
   );
-}
+};
 
 export default App;
